@@ -1,0 +1,158 @@
+/* public/css/theme-green.css */
+/* Verde brillante - variables */
+:root{
+  --green-500: #10b981; /* base */
+  --green-600: #059669; /* oscuro */
+  --green-400: #34d399; /* claro */
+  --green-accent: #00e676; /* neon accent */
+  --bg: #0f1720;
+  --muted: #94a3b8;
+  --card-bg: #0b1220;
+}
+
+/* Override AdminLTE / bootstrap basics */
+body.layout-fixed {
+  background: linear-gradient(180deg, rgba(3,7,12,0.85), rgba(6,10,14,0.95));
+  color: #e6f9f0;
+}
+
+/* Sidebar */
+.app-sidebar {
+  background: linear-gradient(180deg, rgba(8,46,28,1), rgba(3,18,12,1));
+  border-right: 1px solid rgba(255,255,255,0.03);
+}
+
+.app-sidebar .brand-link {
+  display:flex;
+  gap:.5rem;
+  align-items:center;
+  padding: .8rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.brand-image {
+  width:32px;
+  height:32px;
+  border-radius:6px;
+  box-shadow: 0 6px 18px rgba(6, 160, 120, 0.12);
+}
+
+/* Brand text */
+.brand-text {
+  color: #bfffe6;
+  font-weight:600;
+  letter-spacing: .2px;
+}
+
+/* Sidebar links */
+.sidebar-wrapper .nav-link {
+  color: #c9ffee;
+  padding: .7rem 1rem;
+  transition: all .12s ease-in-out;
+}
+.sidebar-wrapper .nav-link .nav-icon {
+  color: rgba(255,255,255,0.85);
+}
+.sidebar-wrapper .nav-link:hover,
+.sidebar-wrapper .nav-link.active {
+  background: linear-gradient(90deg, rgba(16,185,129,0.06), rgba(16,185,129,0.03));
+  border-left: 3px solid var(--green-500);
+  color: #ffffff;
+}
+
+/* Badges and buttons */
+.btn.btn-success, .btn-success {
+  background: linear-gradient(180deg,var(--green-400),var(--green-600));
+  border-color: rgba(0,0,0,0.05);
+  box-shadow: 0 6px 18px rgba(16,185,129,0.12);
+  color: #03110b;
+}
+
+.btn.btn-outline-success {
+  color: var(--green-500);
+  border-color: rgba(16,185,129,0.18);
+}
+
+/* Tables */
+.table {
+  background: transparent;
+  color: #eafff3;
+}
+.table thead th {
+  color: #bfffe6;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.table tbody tr:hover {
+  background: rgba(16,185,129,0.03);
+}
+
+/* Cards / containers */
+.container, .card {
+  background: rgba(3,7,12,0.35);
+  border: 1px solid rgba(255,255,255,0.03);
+  color: #e6f9f0;
+}
+
+/* Form controls */
+.form-control {
+  background: rgba(255,255,255,0.02);
+  color: #e8fff6;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.form-control:focus {
+  box-shadow: 0 8px 30px rgba(16,185,129,0.08);
+  border-color: var(--green-500);
+}
+
+/* Page header */
+.page-header {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1rem; margin-bottom:1rem;
+}
+
+/* Utilities */
+.text-green {
+  color: var(--green-500) !important;
+}
+.small-muted {
+  color: var(--muted);
+}
+
+/* Neon accent for important elements */
+.neon {
+  color: #00ffb2;
+  text-shadow: 0 2px 12px rgba(0,230,118,0.18);
+}
+
+/* Overwrite blancos de tablas y cards */
+.card, .container, .table, .dataTables_wrapper, .dataTables_scrollBody {
+  background: rgba(3,7,12,0.35) !important;
+  color: #e6f9f0 !important;
+  border: 1px solid rgba(255,255,255,0.03) !important;
+}
+
+/* Table header bg + text */
+.table thead th {
+  background: transparent !important;
+  color: var(--green-400) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+}
+
+/* Table body rows */
+.table tbody tr {
+  background: rgba(255,255,255,0.02) !important;
+  color: #e9fff4 !important;
+}
+
+/* DataTables default white overlay fix */
+.dataTables_wrapper .dataTables_processing,
+.dataTables_wrapper .dataTables_empty {
+  background: transparent !important;
+  color: #e6f9f0 !important;
+}
+
+/* Inputs / selects inside cards */
+.card .form-control, .table .form-control {
+  background: rgba(255,255,255,0.02) !important;
+  color: #eafff3 !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+}
