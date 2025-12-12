@@ -32,7 +32,6 @@
                 <img src="../assets/img/user4-128x128.jpg" class="rounded-circle shadow me-3" alt="User Image"
                   style="width: 70px; height: 70px;" />
 
-                <!-- INFO A LA DERECHA -->
                 <div class="d-flex flex-column text-start">
 
                   <!-- Nombre -->
