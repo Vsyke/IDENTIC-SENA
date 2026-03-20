@@ -6878,7 +6878,25 @@ textarea.form-control-lg {
 
 .text-bg-primary {
   color: #fff !important;
-  background-color: RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1)) !important;
+  background-color: #157c65 !important;
+}
+
+
+.user-footer-btn {
+    /* Forzar el tamaño estándar de un botón Bootstrap small */
+    height: 32px !important; 
+    padding: 0.25rem 0.5rem !important; 
+    
+    /* Asegurar que el texto esté centrado */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    /* Estilo visual del botón Ajustes */
+    background-color: #e9ecef !important;
+    border-color: #e9ecef !important;
+    color: #198754 !important; /* Color verde del texto */
+    font-weight: 500;
 }
 
 .text-bg-secondary {

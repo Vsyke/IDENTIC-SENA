@@ -14,63 +14,57 @@
 
 
     <div class="d-flex align-items-center gap-2">
-      <div class="dropdown me-2">
-        <li class="nav-item dropdown user-menu" style="list-style: none;">
-          <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-            <img src="../assets/img/user4-128x128.jpg" class="user-image rounded-circle shadow" alt="User Image"
-              style="width:50px;height:50px;border-radius:6px;object-fit:cover;" />
-            <span class="d-none d-md-inline">{{ auth()->user()->name ?? 'Usuario' }}</span>
-          </a>
-          </a>
+      {{-- El menú del usuario (Dropdown) --}}
+      <li class="nav-item dropdown user-menu d-flex align-items-center" style="list-style: none;">
+        <a href="#" class="nav-link dropdown-toggle p-0" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="../assets/img/user4-128x128.jpg" class="user-image rounded-circle shadow" alt="User Image"
+            style="width:40px;height:40px;object-fit:cover;" />
+          <span class="d-none d-md-inline ms-2 me-1">{{ auth()->user()->name ?? 'Usuario' }}</span>
+        </a>
 
-          <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-            <li class="user-header text-bg-primary">
-
-              <div class="d-flex align-items-center">
-
-                <!-- FOTO IZQUIERDA -->
-                <img src="../assets/img/user4-128x128.jpg" class="rounded-circle shadow me-3" alt="User Image"
-                  style="width: 70px; height: 70px;" />
-
-                <div class="d-flex flex-column text-start">
-
-                  <!-- Nombre -->
-                  <span class="fw-bold">{{ auth()->user()->name ?? 'Usuario' }}</span>
-
-                  <!-- Fecha -->
-                  <span class="text-light small">
-                    {{ auth()->user()->created_at->format('d/m/Y') }}
-                  </span>
-
-                </div>
-
+        {{-- Menú Desplegable --}}
+        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+          {{-- Encabezado del usuario (Se mantiene igual, está bien) --}}
+          <li class="user-header text-bg-success">
+            {{-- ... (Contenido de imagen y texto aquí) ... --}}
+            <div class="d-flex align-items-center">
+              <img src="../assets/img/user4-128x128.jpg" class="rounded-circle shadow me-3" alt="User Image"
+                style="width: 70px; height: 70px; border: 3px solid rgba(255, 255, 255, 0.5);" />
+              <div class="d-flex flex-column text-start">
+                <span class="fw-bold fs-5">{{ auth()->user()->roles->first()->name ?? 'Administrador' }}</span>
+                <span class="fw-normal text-light small">{{ auth()->user()->name ?? 'Usuario' }}</span>
+                <span class="text-light small mt-1">
+                  Miembro desde: {{ auth()->user()->created_at->format('d/m/Y') }}
+                </span>
               </div>
+            </div>
+          </li>
 
-            </li>
+          
+          <li class="user-footer p-2">
+            <div class="d-flex justify-content-between align-items-center">
 
-        </li>
-        <li class="user-footer">
-          <div class="d-flex justify-content-between align-items-center">
+             
+              <form action="{{ route('perfil.edit') }}" method="GET">
+                
+                <button class="btn btn-sm shadow" type="submit"
+                  style="background-color: #8dd9c6; color: #198754; font-weight: 500;">
+                  Ajustes
+                </button>
+              </form>
 
-            <a class="btn btn-sm btn-outline-success" href="{{ route('perfil.edit') }}">
-              Ajustes
-            </a>
+              
+              <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button class="btn btn-sm btn-danger shadow" type="submit">
+                  <i class="bi bi-box-arrow-right"></i> Salir
+                </button>
+              </form>
 
-            <form action="{{ route('logout') }}" method="POST" class="d-inline">
-              @csrf
-              <button class="btn btn-sm btn-danger" type="submit">
-                <i class="bi bi-box-arrow-right"></i> Salir
-              </button>
-            </form>
-
-          </div>
-        </li>
-
+            </div>
+          </li>
         </ul>
-        </li>
-        </li>
-
-      </div>
+      </li>
     </div>
   </div>
 </header>
