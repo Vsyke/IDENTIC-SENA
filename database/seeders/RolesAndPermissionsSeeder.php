@@ -14,17 +14,10 @@ class RolesAndPermissionsSeeder extends Seeder
     {
         // PERMISOS DEL SISTEMA VIEJO (SI AÚN LOS NECESITAS)
         $modulosViejos = [
-            'unidades',
             'afectacion_tipos',
-            'clientes',
             'documento_tipos',
-            'productos',
-            'ventas',
-            'comprobante_tipos',
             'users',
             'roles_permisos',
-            'compras',
-            'proveedores',
             'aulas'
         ];
 
@@ -66,7 +59,6 @@ class RolesAndPermissionsSeeder extends Seeder
         $maestroRole = Role::firstOrCreate(['name' => 'maestro']);
         $vigilanteRole = Role::firstOrCreate(['name' => 'vigilante']);
         $invitadoRole = Role::firstOrCreate(['name' => 'invitado']);
-        $vendedorRole = Role::firstOrCreate(['name' => 'vendedor']);
 
         // ======================
         // ASIGNAR PERMISOS
@@ -100,11 +92,21 @@ class RolesAndPermissionsSeeder extends Seeder
             ['email' => 'admin@prueba.com'],
             [
                 'name' => 'Administrador',
-                'password' => Hash::make('admin'),
+                'password' => Hash::make('12345678'),
                 'activo' => true
             ]
         );
 
+        $vigilante = User::firstOrCreate(
+            ['email' => 'vigilante@prueba.com'],
+            [
+                'name' => 'Vigilante',
+                'password' => Hash::make('12345678'),
+                'activo' => true
+            ]
+            );
+
+        $vigilante->assignRole('vigilante');
         $admin->assignRole('admin');
     }
 }

@@ -47,6 +47,8 @@
 
     <link rel="stylesheet" href="{{ asset('css/theme-green.css') }}">
 
+    <link rel="stylesheet" href="{{ asset('css/qr-identic.css') }}">
+
   </head>
   <!--end::Head-->
   <!--begin::Body-->
