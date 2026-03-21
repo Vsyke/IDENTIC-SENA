@@ -15,14 +15,6 @@ use Illuminate\Http\Request;
 use App\Models\Asistencia;
 use App\Http\Controllers\DashboardController;
 
-Route::get('/donde-estoy', function() {
-    return response()->json([
-        'ruta_proyecto' => base_path(),
-        'usuario_actual' => auth()->user()->name ?? 'Nadie logueado',
-        'archivo_web_php' => __FILE__
-    ]);
-});
-
 /*
 |--------------------------------------------------------------------------
 | Registro de estudiantes (solo invitados)
@@ -99,6 +91,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/perfil', [PerfilController::class, 'edit'])->name('perfil.edit');
     Route::put('/perfil', [PerfilController::class, 'update'])->name('perfil.update');
 
+    
+
     /*
     |--------------------------------------------------------------------------
     | Aulas (CRUD)
@@ -106,19 +100,17 @@ Route::middleware('auth')->group(function () {
     */
     Route::middleware(['auth'])->group(function () {
     Route::resource('aulas', AulaController::class);
-    Route::resource('fichas', FichaController::class);
 });
-
-
-
-
     /*
-    |--------------------------------------------------------------------------
-    | Fichas (CRUD)
-    |--------------------------------------------------------------------------
-    */
-    Route::resource('fichas', FichaController::class);
+|--------------------------------------------------------------------------
+| Fichas (CRUD)
+|--------------------------------------------------------------------------
+*/
+// 1. LA RUTA ESPECÍFICA SIEMPRE VA PRIMERO
+Route::get('fichas/select', [FichaController::class, 'select'])->name('fichas.select');
 
+// 2. EL RESOURCE VA DESPUÉS
+Route::resource('fichas', FichaController::class);
 });
 use App\Http\Controllers\AsistenciaController;
 

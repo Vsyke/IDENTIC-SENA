@@ -10,61 +10,46 @@ use Illuminate\Support\Facades\DB;
 
 class AsistenciaController extends Controller
 {
-    public function vistaQR()
+    // ... tus otros métodos (vistaQR, generarQR, scanQR) se quedan igual ...
+
+    /**
+     * Este método es el que recibe el código desde el JS del escáner
+     */
+    public function registrarPorEscaneo(Request $request)
     {
-        return view('asistencias.qr');
-    }
+        // 1. Recibir el código (que es el documento del estudiante)
+        $documento = $request->input('codigo_qr');
 
-    public function generarQR(Request $request)
-    {
-        $request->validate([
-            'documento' => 'required'
-        ]);
-
-        // 🔥 El documento está en la tabla estudiantes
-        $estudiante = DB::table('estudiantes')
-            ->where('numero_documento', $request->documento)
-            ->first();
-
-        if (!$estudiante) {
-            return back()->with('error', 'Documento no encontrado');
+        if (!$documento) {
+            return response()->json(['success' => false, 'message' => 'Código QR vacío']);
         }
 
-        // Relación estudiante → usuario
-        $user = User::find($estudiante->user_id);
-
-        if (!$user) {
-            return back()->with('error', 'Usuario no encontrado');
-        }
-
-        return view('asistencias.qr', [
-            'documento' => $request->documento
-        ]);
-    }
-
-    public function scanQR($documento)
-    {
+        // 2. Buscar al estudiante en la tabla 'estudiantes'
         $estudiante = DB::table('estudiantes')
             ->where('numero_documento', $documento)
             ->first();
 
         if (!$estudiante) {
-            return response('QR inválido', 404);
+            return response()->json(['success' => false, 'message' => 'Estudiante no encontrado en la base de datos']);
         }
 
+        // 3. Obtener el usuario
         $user = User::find($estudiante->user_id);
 
         if (!$user) {
-            return response('Usuario no válido', 404);
+            return response()->json(['success' => false, 'message' => 'El estudiante no tiene un usuario vinculado']);
         }
 
         $hoy = Carbon::today();
-
+        
+        // 4. Buscar si ya tiene registro hoy
         $asistencia = Asistencia::where('user_id', $user->id)
             ->whereDate('fecha', $hoy)
             ->first();
 
-        // Entrada
+        // --- LÓGICA DE REGISTRO ---
+
+        // CASO A: Es su primera vez hoy (REGISTRAR ENTRADA)
         if (!$asistencia) {
             Asistencia::create([
                 'user_id' => $user->id,
@@ -72,24 +57,28 @@ class AsistenciaController extends Controller
                 'entrada' => now(),
             ]);
 
-            return view('asistencias.resultado', [
-                'mensaje' => 'Entrada registrada correctamente'
+            return response()->json([
+                'success' => true, 
+                'message' => '¡Entrada registrada correctamente!'
             ]);
         }
 
-        // Salida
+        // CASO B: Ya entró pero no ha salido (REGISTRAR SALIDA)
         if ($asistencia->entrada && !$asistencia->salida) {
             $asistencia->update([
                 'salida' => now()
             ]);
 
-            return view('asistencias.resultado', [
-                'mensaje' => 'Salida registrada correctamente'
+            return response()->json([
+                'success' => true, 
+                'message' => '¡Salida registrada correctamente!'
             ]);
         }
 
-        return view('asistencias.resultado', [
-            'mensaje' => 'La asistencia de hoy ya fue completada'
+        // CASO C: Ya tiene entrada y salida hoy
+        return response()->json([
+            'success' => false, 
+            'message' => 'Ya has completado tu asistencia de hoy.'
         ]);
     }
 }

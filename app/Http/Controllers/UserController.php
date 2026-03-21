@@ -8,6 +8,7 @@ use App\Models\User;
 use Yajra\DataTables\DataTables;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -71,16 +72,31 @@ class UserController extends Controller
 
         $data['password'] = Hash::make($data['password']);
 
-        $user = User::create($data);
+        return DB::transaction(function () use ($request) {
+        // 1. Crear el usuario
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'activo' => $request->activo,
+        ]);
 
-        if ($request->has('roles')) {
-            $user->syncRoles($request->input('roles'));
+        // 2. Asignar roles (Spatie)
+        $user->assignRole($request->roles);
+
+        // 3. ¡ESTA ES LA PARTE CLAVE!
+        // Si el rol "estudiante" fue seleccionado, guardamos en la tabla estudiantes
+        if (in_array('estudiante', $request->roles)) {
+            DB::table('estudiantes')->insert([
+                'user_id' => $user->id,
+                'ficha_id' => $request->ficha_id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Registro creado satisfactoriamente'
-        ]);
+        return response()->json(['message' => 'Usuario creado con éxito']);
+    });
     }
 
     /**
@@ -106,29 +122,38 @@ class UserController extends Controller
 
     /**
      * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        $data = $this->validateData($request, $id);
-        $user = User::findOrFail($id);        
+     */public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
 
-        if (!empty($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
+    return DB::transaction(function () use ($request, $user) {
+        // 1. Actualizar datos básicos
+        $user->update($request->only('name', 'email', 'activo'));
+        if ($request->password) {
+            $user->update(['password' => Hash::make($request->password)]);
+        }
+
+        // 2. Sincronizar roles
+        $user->syncRoles($request->roles);
+
+        // 3. Manejar la ficha del estudiante
+        if (in_array('estudiante', $request->roles)) {
+            // updateOrInsert busca si existe por user_id, si no, lo crea
+            DB::table('estudiantes')->updateOrInsert(
+                ['user_id' => $user->id],
+                [
+                    'ficha_id' => $request->ficha_id,
+                    'updated_at' => now()
+                ]
+            );
         } else {
-            unset($data['password']);
+            // Si le quitamos el rol de estudiante, opcionalmente borramos su registro de ficha
+            DB::table('estudiantes')->where('user_id', $user->id)->delete();
         }
 
-        $user->update($data);
-
-        if ($request->has('roles')) {
-            $user->syncRoles($request->input('roles'));
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Registro actualizado correctamente'
-        ]);
-    }
+        return response()->json(['message' => 'Usuario actualizado con éxito']);
+    });
+}
 
     /**
      * Remove the specified resource from storage.

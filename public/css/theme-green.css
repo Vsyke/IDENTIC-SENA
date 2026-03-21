@@ -119,7 +119,7 @@ body.layout-fixed {
 
 /* Neon accent for important elements */
 .neon {
-  color: #00ffb2;
+  color: #26f3b6;
   text-shadow: 0 2px 12px rgba(0,230,118,0.18);
 }
 
@@ -155,4 +155,25 @@ body.layout-fixed {
   background: rgba(255,255,255,0.02) !important;
   color: #eafff3 !important;
   border: 1px solid rgba(255,255,255,0.04) !important;
+}
+
+/* Cambia el color del placeholder (el texto de sugerencia dentro del input) */
+.form-control::placeholder, 
+.form-select::placeholder {
+    color: rgba(230, 249, 240, 0.4) !important; /* Un verde muy clarito y transparente */
+    font-style: italic; /* Opcional: le da un toque diferente */
+}
+
+/* Para navegadores específicos (Edge, Chrome, Safari) */
+.form-control::-webkit-input-placeholder {
+    color: rgba(230, 249, 240, 0.4) !important;
+}
+
+/* Evita que el navegador ponga fondo blanco al autocompletar */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #eafff3 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #0b1220 inset !important;
+    transition: background-color 5000s ease-in-out 0s;
 }

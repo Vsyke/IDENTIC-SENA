@@ -1,7 +1,6 @@
-@extends('plantilla.app') {{-- Asegúrate de que este nombre sea el de tu archivo de plantilla --}}
+@extends('plantilla.app')
 
 @section('contenido')
-<h4 class="neon text-center mb-3">FICHA: {{ $ficha }}</h4>
 <div class="container-fluid pt-4">
     <div class="row justify-content-center">
         <div class="col-md-6">

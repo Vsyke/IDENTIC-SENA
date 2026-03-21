@@ -10,6 +10,7 @@ class Ficha extends Model
     use HasFactory;
 
     protected $fillable = [
+        'fichas',
         'codigo',
         'programa',
         'cantidad_estudiantes',

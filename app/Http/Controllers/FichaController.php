@@ -63,4 +63,19 @@ class FichaController extends Controller
         return redirect()->route('fichas.index')
             ->with('success', 'Ficha eliminada correctamente');
     }
+
+   public function select()
+{
+    try {
+        // Asegúrate de que el modelo Ficha exista y tenga estos campos
+        $fichas = \App\Models\Ficha::select('id', 'codigo', 'programa')->get();
+    return response()->json($fichas);
+    } catch (\Exception $e) {
+        // Esto te ayudará a ver el error real en los logs de Laravel
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
 }
+
+
+}
+

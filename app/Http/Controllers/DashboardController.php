@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Asistencia;
-use App\Models\Equipo; // El modelo Equipo ya está siendo utilizado
+use App\Models\Equipo; 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // Importante para las consultas directas
 
 class DashboardController extends Controller
 {
@@ -13,52 +14,59 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // --- CÁLCULO DE MÉTRICAS GLOBALES (INFO BOXES) ---
+        // --- 1. LÓGICA ESPECÍFICA PARA ESTUDIANTES ---
+        if ($user->hasRole('estudiante')) {
+    $estudiante = DB::table('estudiantes')
+        ->join('fichas', 'estudiantes.ficha_id', '=', 'fichas.id')
+        ->where('estudiantes.user_id', $user->id)
+        ->select('fichas.codigo', 'fichas.programa') // Traemos código (2670687) y programa (ADSO)
+        ->first();
+
+    $ficha = $estudiante ? $estudiante->codigo . " - " . $estudiante->programa : "Ficha no asignada";
+
+    return view('estudiantes.dashboard', compact('ficha'));
+}
+
+        // --- 2. CÁLCULO DE MÉTRICAS GLOBALES (ADMIN/VIGILANTE) ---
         
-        // 1. Total de Personas (Todos los usuarios)
+        // Total de Personas (Todos los usuarios)
         $totalPersonas = User::count(); 
 
-        // 2. Presentes Hoy (Usuarios únicos con ENTRADA registrada hoy)
+        // Presentes Hoy (Usuarios únicos con ENTRADA registrada hoy)
         $presentesHoy = Asistencia::whereDate('fecha', now())
             ->whereNotNull('entrada')
-            ->distinct('user_id') // Contamos solo usuarios únicos
+            ->distinct('user_id') 
             ->count('user_id');
 
-        // 3. Ausentes Hoy
+        // Ausentes Hoy
         $ausentesHoy = $totalPersonas - $presentesHoy;
 
         // --- RANGOS DE TIEMPO (Configuración) ---
-        // Manteniendo la configuración de periodos tal cual
         $periodos = [
             'Mañana' => ['inicio' => '06:00:00', 'fin' => '13:00:00', 'cruce' => false],
             'Tarde' => ['inicio' => '12:00:00', 'fin' => '18:00:00', 'cruce' => false],
             'Noche' => ['inicio' => '18:00:00', 'fin' => '22:00:00', 'cruce' => false],
-            // La madrugada cruza el día
             'Madrugada' => ['inicio' => '22:00:00', 'fin' => '06:00:00', 'cruce' => true],
         ];
 
-        // --- DETECCIÓN DEL PERÍODO ACTUAL O SOLICITADO ---
         $periodoSolicitado = $request->input('periodo', 'Mañana');
         $rango = $periodos[$periodoSolicitado] ?? $periodos['Mañana']; 
 
-        // --- 1. CÁLCULO DE ASISTENCIA POR ROL FILTRADA POR PERÍODO ---
+        // --- 3. CÁLCULO DE ASISTENCIA POR ROL FILTRADA POR PERÍODO ---
         $roles = ['estudiante', 'vigilante', 'maestro', 'invitado'];
         $datosAsistencia = [];
         $fechaHoy = now()->toDateString();
-        $fechaManana = now()->addDay()->toDateString(); // Necesario para Madrugada
+        $fechaManana = now()->addDay()->toDateString();
 
         foreach ($roles as $rol) {
             $totalRol = User::role($rol)->count();
 
-            // Construir la consulta base para el conteo de asistencias del día
             $queryAsistencias = Asistencia::whereNotNull('entrada')
                 ->whereHas('user', function ($query) use ($rol) {
                     $query->role($rol);
                 });
 
-            // Aplicar el filtro de rango de tiempo
             if ($rango['cruce'] === true) {
-                // Lógica para Madrugada: Hoy (22:00 a 23:59:59) O Mañana (00:00:00 a 06:00:00)
                 $queryAsistencias->where(function ($query) use ($rango, $fechaHoy, $fechaManana) {
                     $query->whereBetween('entrada', [
                         $fechaHoy . ' ' . $rango['inicio'],
@@ -70,7 +78,6 @@ class DashboardController extends Controller
                     ]);
                 });
             } else {
-                // Lógica para rangos normales (Mañana, Tarde, Noche): Solo el día de hoy
                 $queryAsistencias->whereBetween('entrada', [
                     $fechaHoy . ' ' . $rango['inicio'],
                     $fechaHoy . ' ' . $rango['fin']
@@ -78,12 +85,11 @@ class DashboardController extends Controller
             }
 
             $asistieronHoy = $queryAsistencias->count();
-
             $porcentaje = $totalRol > 0 ? round(($asistieronHoy / $totalRol) * 100) : 0;
             $datosAsistencia[$rol] = compact('totalRol', 'asistieronHoy', 'porcentaje');
         }
 
-        // --- 2. CÁLCULO DE REGISTROS RECIENTES (sin filtro de período) ---
+        // --- 4. REGISTROS RECIENTES Y TOTALES ---
         $registrosRecientes = Asistencia::with('user')
             ->whereDate('fecha', now())
             ->whereNotNull('entrada')
@@ -91,24 +97,17 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
-        // --- 3. CÁLCULO DE REGISTROS TOTALES (sin filtro de período) ---
         $registrosTotales = Asistencia::with('user')
             ->whereDate('fecha', now())
             ->orderBy('entrada', 'asc')
             ->get();
 
-        // --- 4. CÁLCULO DE EQUIPOS (COMPUTADORES) REGISTRADOS ---
         $equiposRegistrados = Equipo::with('user')
             ->latest()
             ->limit(5)
             ->get();
 
-        // --- 5. LÓGICA DE REDIRECCIÓN Y VISTA FINAL (Bloque único) ---
-        if ($user->hasRole('estudiante')) {
-            return view('estudiantes.dashboard');
-        }
-
-        // Se pasan TODAS las variables, incluyendo las nuevas métricas globales.
+        // Vista para el Administrador/Vigilante
         return view('dashboard.index', compact(
             'totalPersonas', 
             'presentesHoy', 

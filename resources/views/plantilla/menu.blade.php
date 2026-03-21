@@ -8,12 +8,16 @@
         </a>
     </div>
 
+    {{-- 
+        Solo mostramos el envoltorio del menú si el usuario NO es estudiante.
+        Si es estudiante, el sidebar quedará vacío o puedes decidir no mostrarlo.
+    --}}
+    @if(!auth()->user()->hasRole('estudiante'))
     <div class="sidebar-wrapper">
         <nav class="mt-2">
 
             <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu">
 
-                <!-- DASHBOARD -->
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link" id="itemDashboard">
                         <i class="nav-icon bi bi-speedometer text-green"></i>
@@ -21,7 +25,6 @@
                     </a>
                 </li>
 
-                <!-- AULAS -->
                 <li class="nav-item">
                     <a href="{{ route('aulas.index') }}" class="nav-link">
                         <i class="bi bi-door-closed text-green"></i>
@@ -29,7 +32,6 @@
                     </a>
                 </li>
 
-                <!-- FICHAS -->
                 <li class="nav-item">
                     <a href="{{ route('fichas.index') }}" class="nav-link">
                         <i class="bi bi-collection-fill text-green"></i>
@@ -37,7 +39,6 @@
                     </a>
                 </li>
 
-                <!-- SEGURIDAD -->
                 <li class="nav-item" id="mnuSeguridad">
                     <a href="#" class="nav-link">
                         <i class="bi bi-shield-lock-fill text-green"></i>
@@ -73,5 +74,6 @@
 
         </nav>
     </div>
+    @endif
 
 </aside>
