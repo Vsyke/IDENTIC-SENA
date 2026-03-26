@@ -1,5 +1,4 @@
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-
     <div class="sidebar-brand">
         <a href="{{ route('dashboard') }}" class="brand-link">
             <img src="{{ asset('assets/logo-green.png') }}" 
@@ -8,23 +7,21 @@
         </a>
     </div>
 
-    {{-- 
-        Solo mostramos el envoltorio del menú si el usuario NO es estudiante.
-        Si es estudiante, el sidebar quedará vacío o puedes decidir no mostrarlo.
-    --}}
-    @if(!auth()->user()->hasRole('estudiante'))
     <div class="sidebar-wrapper">
         <nav class="mt-2">
-
             <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu">
-
+                {{-- VIGILANTE: Aquí defines qué ve específicamente el vigilante --}}
+                @if(auth()->user()->hasRole('vigilante') || auth()->user()->hasRole('admin'))
                 <li class="nav-item">
-                    <a href="{{ route('dashboard') }}" class="nav-link" id="itemDashboard">
-                        <i class="nav-icon bi bi-speedometer text-green"></i>
-                        <p>Dashboard</p>
+                    <a href="{{ route('asistencias.personasQR') }}" class="nav-link">
+                        <i class="bi bi-qr-code-scan text-green"></i>
+                        <p>Escanear QR De Personas</p>
                     </a>
                 </li>
+                @endif
 
+                {{-- ADMINISTRACIÓN: Aulas y Fichas (Solo para personal administrativo/profesores, NO vigilantes ni estudiantes) --}}
+                @if(!auth()->user()->hasRole('estudiante') && !auth()->user()->hasRole('vigilante'))
                 <li class="nav-item">
                     <a href="{{ route('aulas.index') }}" class="nav-link">
                         <i class="bi bi-door-closed text-green"></i>
@@ -39,6 +36,7 @@
                     </a>
                 </li>
 
+                {{-- SEGURIDAD --}}
                 <li class="nav-item" id="mnuSeguridad">
                     <a href="#" class="nav-link">
                         <i class="bi bi-shield-lock-fill text-green"></i>
@@ -47,7 +45,6 @@
                             <i class="nav-arrow bi bi-chevron-right"></i>
                         </p>
                     </a>
-
                     <ul class="nav nav-treeview">
                         @can('roles_permisos_list')
                         <li class="nav-item">
@@ -66,14 +63,11 @@
                             </a>
                         </li>
                         @endcan
-
                     </ul>
                 </li>
+                @endif
 
             </ul>
-
         </nav>
     </div>
-    @endif
-
 </aside>

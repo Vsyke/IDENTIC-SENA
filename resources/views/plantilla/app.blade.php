@@ -52,7 +52,16 @@
   </head>
   <!--end::Head-->
   <!--begin::Body-->
-  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary {{ auth()->user()->hasRole('estudiante') ? 'sidebar-collapse' : '' }}">
+    @if (auth()->user()->hasRole('estudiante'))
+      <style>
+        /* Forzamos que el sidebar desaparezca y el contenido ocupe todo el ancho */
+        .app-sidebar { display: none !important; }
+        .app-main { margin-left: 0 !important; width: 100% !important; }
+        .app-header { margin-left: 0 !important; width: 100% !important; }
+        .app-footer { margin-left: 0 !important; width: 100% !important; }
+      </style>
+    @endif
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
       <!--begin::Header-->

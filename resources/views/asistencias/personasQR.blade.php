@@ -1,4 +1,4 @@
-@extends('plantilla.app')
+@extends('plantilla.app') {{-- Asegúrate de que este nombre sea el de tu archivo de plantilla --}}
 
 @section('contenido')
 <div class="container-fluid pt-4">

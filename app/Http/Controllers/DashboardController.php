@@ -1,36 +1,39 @@
 <?php
 
-namespace App\Http\Controllers;
+    namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Asistencia;
-use App\Models\Equipo; 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // Importante para las consultas directas
+    use App\Models\User;
+    use App\Models\Asistencia;
+    use App\Models\Equipo; 
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\DB; // Importante para las consultas directas
 
-class DashboardController extends Controller
-{
-    public function index(Request $request)
+    class DashboardController extends Controller
     {
-        $user = auth()->user();
+        public function index(Request $request)
+{
+    $user = auth()->user();
 
-        // --- 1. LÓGICA ESPECÍFICA PARA ESTUDIANTES ---
-        if ($user->hasRole('estudiante')) {
-    $estudiante = DB::table('estudiantes')
-        ->join('fichas', 'estudiantes.ficha_id', '=', 'fichas.id')
-        ->where('estudiantes.user_id', $user->id)
-        ->select('fichas.codigo', 'fichas.programa') // Traemos código (2670687) y programa (ADSO)
-        ->first();
+    // 1. ESTUDIANTE: Solo ve su QR
+    if ($user->hasRole('estudiante')) {
+        $estudiante = DB::table('estudiantes')
+            ->join('fichas', 'estudiantes.ficha_id', '=', 'fichas.id')
+            ->where('estudiantes.user_id', $user->id)
+            ->select('fichas.codigo', 'fichas.programa')
+            ->first();
 
-    $ficha = $estudiante ? $estudiante->codigo . " - " . $estudiante->programa : "Ficha no asignada";
+        $ficha = $estudiante ? $estudiante->codigo . " - " . $estudiante->programa : "Ficha no asignada";
+        return view('estudiantes.dashboard', compact('ficha'));
+    }
 
-    return view('estudiantes.dashboard', compact('ficha'));
-}
+    // 2. VIGILANTE: Va directo a su panel de escaneo
+    if ($user->hasRole('vigilante')) {
+        return view('vigilantes.dashboard', compact('user'));
+    }
 
-        // --- 2. CÁLCULO DE MÉTRICAS GLOBALES (ADMIN/VIGILANTE) ---
-        
-        // Total de Personas (Todos los usuarios)
-        $totalPersonas = User::count(); 
+    // 3. ADMIN: Todo lo demás (Métricas globales)
+    if ($user->hasRole('admin')) {
+         $totalPersonas = User::count(); 
 
         // Presentes Hoy (Usuarios únicos con ENTRADA registrada hoy)
         $presentesHoy = Asistencia::whereDate('fecha', now())
@@ -119,4 +122,5 @@ class DashboardController extends Controller
             'equiposRegistrados'
         ));
     }
+}
 }

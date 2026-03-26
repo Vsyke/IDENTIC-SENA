@@ -10,8 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class AsistenciaController extends Controller
 {
-    // ... tus otros métodos (vistaQR, generarQR, scanQR) se quedan igual ...
-
+    
+    public function vistaQR()
+    {
+        $asistencias = Asistencia::with('user')->get();
+        return view('asistencias.qr', compact('asistencias'));
+    }
     /**
      * Este método es el que recibe el código desde el JS del escáner
      */
@@ -80,5 +84,9 @@ class AsistenciaController extends Controller
             'success' => false, 
             'message' => 'Ya has completado tu asistencia de hoy.'
         ]);
+    }
+    public function personasQR()
+    {
+        return view('asistencias.personasQR');
     }
 }

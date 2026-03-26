@@ -177,3 +177,12 @@ input:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0px 1000px #0b1220 inset !important;
     transition: background-color 5000s ease-in-out 0s;
 }
+
+.app-sidebar .ocultar-sidebar {
+    display: none !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+}
