@@ -1,84 +1,85 @@
-# Sistema de Compras y Ventas en Laravel 12 - MODELO SISTEMA COMPUBINSAS
+# Sykron S.A.S. - Sistema de Gestión de Asistencia e Inventario 🚀
+Proyecto Formativo ADSO - SENA | Fase IV de Ejecución
+Sykron S.A.S. es una aplicación web robusta desarrollada para el control de asistencia (aprendices, instructores, administrativos) y la gestión de inventario de equipos tecnológicos. Este sistema ha sido adaptado y evolucionado a partir del modelo COMPUBINSAS, integrando funcionalidades avanzadas de seguridad, reportes y escalabilidad.
 
-Este proyecto ha sido desarrollado durante el curso **"Desarrolla sistemas web en PHP Laravel 12, MySQL, Datatables - ADSO FASE IV"**  
-**instructor:** EDUBIN TORRES PEÑA 
-**Derechos reservados © 2025**  
-📚 Perfil del autor: SENA - ADSO - PHP - FASE 4
+## 📚 Origen y Créditos
+Este proyecto utiliza como base el núcleo arquitectónico del curso "Desarrolla sistemas web en PHP Laravel 12, MySQL, Datatables - ADSO FASE IV".
 
----
+Instructor Autor: Edubin Torres Peña.
 
-## 📜 Derechos y permisos
-Este código forma parte del contenido educativo  y puedes usarlo para tus propios proyectos bajo estas condiciones:
+Modelo de Referencia: Sistema COMPUBINSAS.
 
-- ✅ **Permitido**
-  - Usar el código para proyectos personales o comerciales.
-  - Modificar y adaptar el código a sus necesidades.
-  - Implementar el sistema en sus propios entornos o para sus clientes.
-  
-- ❌ **No permitido**
-  - No está permitido publicar o comercializar el código del curso como un producto independiente.
-  - Publicar el código fuente completo en repositorios públicos, foros, redes sociales, sitios web o cualquier medio sin autorización.
-  - Usar el nombre del autor o del curso para promocionar trabajos derivados sin permiso.
+Derechos Reservados: © 2025 Edubin Torres Peña - SENA.
 
----
+## Stack Tecnológico
+Backend: Laravel 12 (PHP 8.2+)
 
-## 📂 Descripción del sistema
+Base de Datos: MariaDB / MySQL
 
-El sistema desarrollado es una **aplicación web completa de compras y ventas** con autenticación, control de permisos y reportes, desarrollada en **Laravel 12** y **MariaDB/MySQL**, con integración de **Bootstrap 5**, **JavaScript vanilla**, **Yajra Datatables**, **SweetAlert**, **Laravel Permission**, **Laravel Excel**, **DomPDF** y **SimpleQR**.
+Frontend: Bootstrap 5, AdminLTE, JavaScript Vanilla (ES6+)
 
----
+Librerías Core:
 
-### 🛠 Funcionalidades principales
+Yajra Datatables: Tablas dinámicas con procesamiento en servidor.
 
-- **Gestión de productos** con categorías, unidades y tipos de afectación para impuestos.
-- **Control de clientes y proveedores** con tipos de documentos.
-- **Módulo de ventas** con registro de detalles, correlativos automáticos y comprobante PDF.
-- **Módulo de compras** con registro de detalles y actualización automática de stock.
-- **Autenticación y autorización** con roles y permisos (Laravel Permission).
-- **Reportes en PDF** y exportación/importación de datos en Excel.
-- **Búsqueda y paginación dinámica** con Yajra Datatables.
-- **Alertas interactivas** con SweetAlert.
-- **Despliegue en red LAN** y en hosting con cPanel.
-- **Generación de códigos QR** para comprobantes.
+Spatie Laravel Permission: Control de acceso basado en roles (RBAC).
 
----
+SimpleQR: Generación de códigos para carnés y comprobantes.
 
-### 📋 Tablas principales de la base de datos
+DomPDF & Laravel Excel: Exportación masiva de reportes.
 
-- **Unidades**
-- **Productos**
-- **Tipos de Afectación** (para impuestos)
-- **Tipos de Documento** (para clientes y proveedores)
-- **Clientes**
-- **Proveedores**
-- **Tipos de Comprobante** (para compras y ventas)
-- **Compras** y **Detalles de Compras**
-- **Ventas** y **Detalles de Ventas**
-- **Correlativos Iniciales** (numeraciones automáticas)
-- **Usuarios**, **Roles** y **Permisos**
+SweetAlert2: Notificaciones e interacción de usuario.
 
----
+## 📋 Funcionalidades Implementadas
+🛡️ Seguridad y Acceso
+Autenticación Multirrol: Roles diferenciados para Admin, Vigilante, Maestro y Estudiante.
 
-### 📦 Tecnologías utilizadas
+Tokens QR: Generación de identificadores únicos (UUID) para validación de identidad.
 
-- **Backend:** Laravel 12 (PHP 8+)
-- **Base de datos:** MariaDB / MySQL
-- **Frontend:** Bootstrap 5, AdminLTE, HTML5, CSS3, JavaScript Vanilla
-- **Complementos:** Yajra Datatables, SweetAlert, Laravel Permission, Laravel Excel, DomPDF, SimpleQR
+📊 Gestión de Asistencia (Módulo Sykron)
+Filtro por Jornadas: Mañana, Tarde, Noche y Madrugada con lógica de cruce de medianoche.
 
----
+Resumen en Tiempo Real: Dashboard con métricas porcentuales y conteo de usuarios únicos (prevención de duplicados).
 
-## 📌 Nota sobre librerías externas  
-Este proyecto utiliza librerías y frameworks de terceros, cada uno con su propia licencia y derechos de autor.
-Se respetan íntegramente sus términos de uso y licencias.
+Historial Detallado: Registro de entradas y salidas con marcas de tiempo precisas.
 
----
+💻 Control de Equipos e Inventario
+Vinculación de Hardware: Registro de equipos asociados a usuarios específicos.
 
-## ⚠ Aviso legal
-Este software se entrega **"tal cual"**, sin garantías expresas o implícitas.  
-Se solicita a los usuarios que hagan un uso responsable y respeten los derechos de autor, evitando su redistribución no autorizada.  
-Gracias por valorar el trabajo del autor y contribuir a mantener la calidad y el esfuerzo que hacen posible este contenido.
+Trazabilidad: Seguimiento de ingreso y salida de dispositivos del centro de formación.
 
----
+🗂️ Módulos de Referencia COMPUBINSAS
+Gestión de productos, categorías y unidades.
 
-© 2025 Edubin torres peña - Instructor – Todos los derechos reservados.
+Control de proveedores y clientes con tipos de documentos.
+
+Correlativos automáticos para documentos oficiales.
+
+## 📜 Derechos y Permisos de Uso
+Este software se rige bajo las condiciones establecidas por el autor original para fines educativos:
+
+✅ Permitido: Modificar, adaptar e implementar el código en entornos personales o para clientes finales.
+
+❌ No Permitido: Comercializar el código fuente como producto independiente o publicarlo íntegramente en repositorios públicos sin autorización expresa.
+
+## 🚀 Instalación Rápida
+Requisitos: Composer, PHP 8.2+, MySQL/MariaDB.
+
+Configuración:
+
+Bash
+composer install
+cp .env.example .env
+php artisan key:generate
+Base de Datos:
+
+Bash
+php artisan migrate --seed
+Servidor:
+
+Bash
+php artisan serve
+## ⚠ Aviso Legal
+Este software se entrega "tal cual", orientado a la formación profesional integral del SENA. Se solicita a los usuarios hacer un uso responsable y respetar la autoría intelectual de los componentes base.
+
+© 2026 Ruiz - Desarrollo y Adaptación | Basado en el trabajo de Edubin Torres Peña.
