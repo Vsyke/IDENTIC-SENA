@@ -1,4 +1,4 @@
-# Sykron S.A.S. - Sistema de Gestión de Asistencia e Inventario 🚀
+# Idenic-Sena - Sistema de Gestión de Asistencia 🚀
 Proyecto Formativo ADSO - SENA | Fase IV de Ejecución
 Sykron S.A.S. es una aplicación web robusta desarrollada para el control de asistencia (aprendices, instructores, administrativos) y la gestión de inventario de equipos tecnológicos. Este sistema ha sido adaptado y evolucionado a partir del modelo COMPUBINSAS, integrando funcionalidades avanzadas de seguridad, reportes y escalabilidad.
 
@@ -82,4 +82,4 @@ php artisan serve
 ## ⚠ Aviso Legal
 Este software se entrega "tal cual", orientado a la formación profesional integral del SENA. Se solicita a los usuarios hacer un uso responsable y respetar la autoría intelectual de los componentes base.
 
-© 2026 Ruiz - Desarrollo y Adaptación | Basado en el trabajo de Edubin Torres Peña.
+© 2026 Identic-Sena - Desarrollo y Adaptación | Basado en el trabajo de Edubin Torres Peña.
