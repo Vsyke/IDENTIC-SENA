@@ -1,23 +1,39 @@
-@extends('plantilla.app') {{-- Asegúrate de que este nombre sea el de tu archivo de plantilla --}}
+@extends('plantilla.app')
 
 @section('contenido')
-<h4 class="neon text-center mb-3">FICHA: {{ $ficha }}</h4>
 <div class="container-fluid pt-4">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-6 col-lg-5">
             
-            <div class="card shadow-lg" style="background: rgba(3,7,12,0.45); border: 1px solid rgba(16,185,129,0.2);">
+            {{-- Card Principal --}}
+            <div class="card shadow-lg" style="background: rgba(3,7,12,0.6); border: 1px solid rgba(16,185,129,0.3); backdrop-filter: blur(10px);">
                 <div class="card-body p-4 text-center">
-                    <h3 class="neon mb-4">SISTEMA IDENTIC | ESCÁNER</h3>
+                    <h2 class="text-white mb-1">Identic <span class="text-green neon">Pass</span></h2>
+                    <p class="text-muted small">ID Digital de Asistencia</p>
                     
-                    <div id="reader" class="mx-auto rounded-3" style="border: 2px solid var(--green-500); max-width: 400px; overflow: hidden;"></div>
-                    
-                    <div id="result-container" class="mt-4 d-none">
-                        <div id="result-message" class="alert py-2 fw-bold" style="background: rgba(16,185,129,0.1); border: 1px solid var(--green-500); color: var(--green-400);"></div>
+                    <hr style="border-color: rgba(16,185,129,0.2);">
+
+                    {{-- Contenedor del QR --}}
+                    <div class="qr-wrapper my-4 p-3 rounded-3" style="background: #fff; display: inline-block; box-shadow: 0 0 25px rgba(16,185,129,0.2);">
+                        {!! QrCode::size(220)->margin(1)->generate($user->qr_token) !!}
+                    </div>
+
+                    {{-- Información del Estudiante --}}
+                    <div class="mt-3">
+                        <h4 class="text-green fw-bold mb-0">{{ auth()->user()->name }}</h4>
+                        <p class="text-white opacity-75 mb-2">{{ $ficha }}</p>
+                        
+                        <div class="d-inline-block px-3 py-1 rounded-pill" style="background: rgba(16,185,129,0.1); border: 1px solid var(--green-500);">
+                            <span class="small-muted">Jornada:</span> 
+                            <span class="text-green fw-bold">{{ $jornada }}</span>
+                        </div>
                     </div>
 
                     <div class="mt-4">
-                        <p class="small-muted">Bienvenido, <span class="text-green">{{ auth()->user()->name }}</span></p>
+                        <p class="small">
+                            <i class="bi bi-info-circle me-1"></i> 
+                            Presenta este código al vigilante para registrar tu entrada o salida.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -27,60 +43,10 @@
 </div>
 
 <style>
-    /* Estilo para los botones internos del lector */
-    #reader button {
-        background: linear-gradient(180deg, var(--green-400), var(--green-600)) !important;
-        color: #03110b !important;
-        border: none !important;
-        padding: 8px 15px !important;
-        border-radius: 4px !important;
-        font-weight: bold !important;
-        margin: 10px !important;
+    .text-green { color: #10b981 !important; }
+    .neon { text-shadow: 0 0 10px rgba(16,185,129,0.5); }
+    .qr-wrapper svg {
+        display: block;
     }
 </style>
-
-<script src="https://unpkg.com/html5-qrcode"></script>
-<script>
-    function onScanSuccess(decodedText, decodedResult) {
-        html5QrcodeScanner.pause();
-        const resDiv = document.getElementById('result-container');
-        const resMsg = document.getElementById('result-message');
-        
-        resDiv.classList.remove('d-none');
-        resMsg.innerHTML = "PROCESANDO...";
-
-        fetch("{{ route('asistencia.escanear') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify({ codigo_qr: decodedText })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success) {
-                resMsg.innerHTML = "✅ ACCESO REGISTRADO";
-                setTimeout(() => window.location.reload(), 2000);
-            } else {
-                resMsg.innerHTML = "❌ ERROR: " + data.message;
-                setTimeout(() => {
-                    resDiv.classList.add('d-none');
-                    html5QrcodeScanner.resume();
-                }, 3000);
-            }
-        })
-        .catch(err => {
-            resMsg.innerHTML = "⚠️ FALLO DE SERVIDOR";
-            setTimeout(() => html5QrcodeScanner.resume(), 3000);
-        });
-    }
-
-    let html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-        fps: 15, 
-        qrbox: { width: 250, height: 250 } 
-    });
-    html5QrcodeScanner.render(onScanSuccess);
-</script>
 @endsection

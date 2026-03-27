@@ -27,6 +27,7 @@ class FichaController extends Controller
             'programa' => 'required',
             'cantidad_estudiantes' => 'required|integer',
             'aula_id' => 'nullable|exists:aulas,id',
+            'jornada' => 'required' // Agregado para que no se cree vacía
         ]);
 
         Ficha::create($request->all());
@@ -48,34 +49,30 @@ class FichaController extends Controller
             'programa' => 'required',
             'cantidad_estudiantes' => 'required|integer',
             'aula_id' => 'nullable|exists:aulas,id',
+            'jornada' => 'required' // Agregado para el Admin
         ]);
 
+        // Moviendo esto adentro de la función
         $ficha->update($request->all());
 
         return redirect()->route('fichas.index')
-            ->with('success', 'Ficha actualizada correctamente');
+            ->with('success', 'Ficha y Jornada actualizadas.');
     }
 
     public function destroy(Ficha $ficha)
     {
         $ficha->delete();
-
         return redirect()->route('fichas.index')
             ->with('success', 'Ficha eliminada correctamente');
     }
 
-   public function select()
-{
-    try {
-        // Asegúrate de que el modelo Ficha exista y tenga estos campos
-        $fichas = \App\Models\Ficha::select('id', 'codigo', 'programa')->get();
-    return response()->json($fichas);
-    } catch (\Exception $e) {
-        // Esto te ayudará a ver el error real en los logs de Laravel
-        return response()->json(['error' => $e->getMessage()], 500);
+    public function select()
+    {
+        try {
+            $fichas = Ficha::select('id', 'codigo', 'programa', 'jornada')->get();
+            return response()->json($fichas);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
-
-
-}
-

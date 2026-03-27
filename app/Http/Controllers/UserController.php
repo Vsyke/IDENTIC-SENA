@@ -151,7 +151,9 @@ class UserController extends Controller
             DB::table('estudiantes')->where('user_id', $user->id)->delete();
         }
 
-        return response()->json(['message' => 'Usuario actualizado con éxito']);
+        return response()->json([ 'status'  => 'success', // <--- ESTO LE DICE AL JS QUE USE EL CHULITO
+        'message' => 'Usuario actualizado con éxito'
+        ]);
     });
 }
 

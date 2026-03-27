@@ -13,6 +13,19 @@
     <form action="{{ route('fichas.store') }}" method="POST">
       @csrf
 
+          <div class="mb-3">
+   <div class="mb-3">
+    <label class="text-green">Jornada de la Ficha</label>
+    <select name="jornada" class="form-control">
+        <option style="background-color: #0f1720;" value="" disabled {{ old('jornada') == '' ? 'selected' : '' }}>-- Seleccione una jornada --</option>
+        <option style="background-color: #0f1720;" value="Mañana" {{ old('jornada') == 'Mañana' ? 'selected' : '' }}>Mañana (06:00 - 12:00)</option>
+        <option style="background-color: #0f1720;" value="Tarde" {{ old('jornada') == 'Tarde' ? 'selected' : '' }}>Tarde (12:00 - 18:00)</option>
+        <option style="background-color: #0f1720;" value="Noche" {{ old('jornada') == 'Noche' ? 'selected' : '' }}>Noche (18:00 - 22:00)</option>
+        <option style="background-color: #0f1720;" value="Madrugada" {{ old('jornada') == 'Madrugada' ? 'selected' : '' }}>Madrugada (22:00 - 06:00)</option>
+    </select>
+</div>
+</div>
+
       <div class="mb-3">
         <label class="form-label">Código</label>
         <input name="codigo" value="{{ old('codigo') }}" class="form-control" required>

@@ -10,81 +10,93 @@ use Illuminate\Support\Facades\DB;
 
 class AsistenciaController extends Controller
 {
-    
+    /**
+     * Muestra la vista con el historial de asistencias (opcional)
+     */
     public function vistaQR()
     {
-        $asistencias = Asistencia::with('user')->get();
+        $asistencias = Asistencia::with('user')->orderBy('fecha', 'desc')->get();
         return view('asistencias.qr', compact('asistencias'));
     }
-    /**
-     * Este método es el que recibe el código desde el JS del escáner
-     */
-    public function registrarPorEscaneo(Request $request)
-    {
-        // 1. Recibir el código (que es el documento del estudiante)
-        $documento = $request->input('codigo_qr');
 
-        if (!$documento) {
+    /**
+     * LÓGICA PRINCIPAL: Recibe el UUID del QR y registra entrada/salida
+     * vinculando la jornada oficial de la ficha del aprendiz.
+     */
+    public function procesarEscaneo(Request $request)
+    {
+        $token = $request->input('codigo_qr'); 
+
+        if (!$token) {
             return response()->json(['success' => false, 'message' => 'Código QR vacío']);
         }
 
-        // 2. Buscar al estudiante en la tabla 'estudiantes'
-        $estudiante = DB::table('estudiantes')
-            ->where('numero_documento', $documento)
+        // 1. Buscamos al estudiante, su usuario y la JORNADA de su ficha
+        // Usamos un Join para traer todo de un solo golpe (más eficiente)
+        $datosEstudiante = DB::table('users')
+            ->join('estudiantes', 'users.id', '=', 'estudiantes.user_id')
+            ->join('fichas', 'estudiantes.ficha_id', '=', 'fichas.id')
+            ->where('users.qr_token', $token) // Buscamos por el nuevo Token UUID
+            ->select(
+                'users.id as user_id', 
+                'users.name', 
+                'fichas.jornada as jornada_oficial',
+                'fichas.codigo as ficha_codigo'
+            )
             ->first();
 
-        if (!$estudiante) {
-            return response()->json(['success' => false, 'message' => 'Estudiante no encontrado en la base de datos']);
+        if (!$datosEstudiante) {
+            return response()->json([
+                'success' => false, 
+                'message' => 'Código no válido o aprendiz no registrado.'
+            ]);
         }
 
-        // 3. Obtener el usuario
-        $user = User::find($estudiante->user_id);
-
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'El estudiante no tiene un usuario vinculado']);
-        }
-
-        $hoy = Carbon::today();
+        $hoy = Carbon::today()->toDateString();
         
-        // 4. Buscar si ya tiene registro hoy
-        $asistencia = Asistencia::where('user_id', $user->id)
+        // 2. Verificar si ya existe un registro de este usuario hoy
+        $asistencia = Asistencia::where('user_id', $datosEstudiante->user_id)
             ->whereDate('fecha', $hoy)
             ->first();
 
-        // --- LÓGICA DE REGISTRO ---
-
-        // CASO A: Es su primera vez hoy (REGISTRAR ENTRADA)
+        // --- CASO A: REGISTRAR ENTRADA ---
         if (!$asistencia) {
             Asistencia::create([
-                'user_id' => $user->id,
+                'user_id' => $datosEstudiante->user_id,
                 'fecha'   => $hoy,
-                'entrada' => now(),
+                'entrada' => now()->toTimeString(),
+                'jornada' => $datosEstudiante->jornada_oficial, // <--- Aquí evitamos el cruce de jornadas
+                'estado'  => 'Presente'
             ]);
 
             return response()->json([
                 'success' => true, 
-                'message' => '¡Entrada registrada correctamente!'
+                'message' => "ENTRADA: {$datosEstudiante->name} | Ficha: {$datosEstudiante->ficha_codigo} | Jornada: {$datosEstudiante->jornada_oficial}"
             ]);
         }
 
-        // CASO B: Ya entró pero no ha salido (REGISTRAR SALIDA)
-        if ($asistencia->entrada && !$asistencia->salida) {
+        // --- CASO B: REGISTRAR SALIDA ---
+        if ($asistencia->salida == null) {
             $asistencia->update([
-                'salida' => now()
+                'salida' => now()->toTimeString()
             ]);
 
             return response()->json([
                 'success' => true, 
-                'message' => '¡Salida registrada correctamente!'
+                'message' => " SALIDA: {$datosEstudiante->name} registrada correctamente."
             ]);
         }
 
-        // CASO C: Ya tiene entrada y salida hoy
+        // --- CASO C: YA MARCÓ TODO ---
         return response()->json([
             'success' => false, 
-            'message' => 'Ya has completado tu asistencia de hoy.'
+            'message' => " {$datosEstudiante->name} ya completó su jornada hoy."
         ]);
     }
+
+    /**
+     * Vista para el scanner del vigilante
+     */
     public function personasQR()
     {
         return view('asistencias.personasQR');

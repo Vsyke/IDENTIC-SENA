@@ -124,7 +124,7 @@
         Route::get('/asistencias/scan/{documento}', [AsistenciaController::class, 'scanQR'])
             ->name('asistencias.qr.scan');
 
-        Route::post('/asistencia/escanear', [AsistenciaController::class, 'registrarPorEscaneo'])->name('asistencia.escanear');
+        Route::post('/asistencia/escanear', [AsistenciaController::class, 'procesarEscaneo'])->name('asistencia.escanear');
 
         Route::get('/asistencias/personasQR', [AsistenciaController::class, 'personasQR'])->name('asistencias.personasQR');
     });

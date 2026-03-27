@@ -15,7 +15,8 @@ class Ficha extends Model
         'programa',
         'cantidad_estudiantes',
         'aula_id',
-        'activo'
+        'activo',
+        'jornada',
     ];
 
     public function aula()
