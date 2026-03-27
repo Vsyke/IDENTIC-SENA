@@ -63,19 +63,24 @@ Este software se rige bajo las condiciones establecidas por el autor original pa
 ❌ No Permitido: Comercializar el código fuente como producto independiente o publicarlo íntegramente en repositorios públicos sin autorización expresa.
 
 ## 🚀 Instalación Rápida
-Requisitos: Composer, PHP 8.2+, MySQL/MariaDB.
 
-Configuración:
+### 1. Requisitos: Composer, PHP 8.2+, MySQL/MariaDB.
+
+### 2. Configuración:
 
 Bash
 composer install
+
 cp .env.example .env
+
 php artisan key:generate
-Base de Datos:
+
+### 3. Base de Datos:
 
 Bash
 php artisan migrate --seed
-Servidor:
+
+### 4. Servidor:
 
 Bash
 php artisan serve
