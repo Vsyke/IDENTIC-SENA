@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\Relations\HasOne; // Importante añadir esto
+use Illuminate\Support\Str; // Asegúrate de tener esta línea arriba
+
 
 class User extends Authenticatable
 {
@@ -19,12 +21,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'activo'
-    ];
+    protected $fillable = ['name', 'email', 'password', 'activo', 'qr_token'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -58,4 +55,16 @@ class User extends Authenticatable
         // Un User tiene un (hasOne) Estudiante
         return $this->hasOne(Estudiante::class, 'user_id');
     }
+
+    /**
+     * Genera un token QR único para el usuario
+     */
+    protected static function booted(){
+    static::creating(function ($user) {
+        // Si el token no ha sido asignado manualmente, lo generamos
+        if (!$user->qr_token) {
+            $user->qr_token = (string) Str::uuid();
+        }
+    });
+}
 }

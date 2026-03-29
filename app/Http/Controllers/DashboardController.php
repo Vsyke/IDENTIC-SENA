@@ -17,11 +17,6 @@ class DashboardController extends Controller
 
         // --- 1. LÓGICA PARA ESTUDIANTES ---
         if ($user->hasRole('estudiante')) {
-            // Generar token si no tiene (Seguridad para el QR)
-            if (!$user->qr_token) {
-                $user->update(['qr_token' => (string) Str::uuid()]);
-            }
-
             $estudiante = DB::table('estudiantes')
                 ->join('fichas', 'estudiantes.ficha_id', '=', 'fichas.id')
                 ->where('estudiantes.user_id', $user->id)

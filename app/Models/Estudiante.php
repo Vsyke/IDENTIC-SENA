@@ -13,7 +13,18 @@ class Estudiante extends Model
     // Nombre de la tabla (importante si no sigue el plural en inglés)
     protected $table = 'estudiantes';
 
-    protected $fillable = ['user_id', 'ficha_id'];
+    protected $fillable = [
+    'user_id', 
+    'ficha_id', 
+    'tipo_documento', 
+    'numero_documento', 
+    'primer_nombre', 
+    'segundo_nombre', 
+    'primer_apellido', 
+    'segundo_apellido', 
+    'email', 
+    'telefono'
+    ];
 
     /**
      * Relación inversa: El estudiante pertenece a un Usuario
