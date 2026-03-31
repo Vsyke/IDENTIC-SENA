@@ -57,14 +57,9 @@ class RegistroEstudianteController extends Controller
             return redirect('/login')->with('success', 'Cuenta creada correctamente.');
 
             } catch (\Exception $e) {
-    DB::rollBack();
-    // Temporal para debug - quitar después
-    dd([
-        'mensaje' => $e->getMessage(),
-        'archivo' => $e->getFile(),
-        'linea'   => $e->getLine(),
-        'request' => $request->all(),
-    ]);
+    } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error al registrar: ' . $e->getMessage());
 }
         }
     }
